@@ -1,21 +1,740 @@
-<html>
-Project home
-© 2022 Anaconda, Inc.
-    <head>
-      <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-      <script defer src="https://pyscript.net/latest/pyscript.js"></script>
-      <py-env>
-        - paths:
-          - /example.py
-      </py-env>
-    </head>
 
-  <body>
-    <h1>Let's print random numbers</h1>
-    <b>Doe's lucky number is <label id="lucky"></label></b>
-    <py-script>
-      from example import generate_random_number
-      pyscript.write('lucky', generate_random_number())
-    </py-script>
-  </body>
-</html>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    
+    <style>
+        /* 페이지 깜빡임 방지를 위한 기본 스타일 */
+        .text-gray-300 { color: rgb(209 213 219); }
+        .hover\:text-white:hover { color: rgb(255 255 255); }
+        .bg-gray-800 { background-color: rgb(31 41 55); }
+    </style>
+    <script src="https://cdn.tailwindcss.com" defer></script>
+    <link rel="icon" type="image/x-icon" href="/static/img/favicon.ico">
+    
+    
+</head>
+<body class="bg-black text-gray-100">
+    
+
+
+<style>
+    /* 기본 스타일 */
+    .text-gray-300 { color: rgb(209 213 219); }
+    .text-gray-400 { color: rgb(156 163 175); }
+    .hover\:text-white:hover { color: rgb(255 255 255); }
+    .bg-gray-800 { background-color: rgb(31 41 55); }
+    .bg-gray-700 { background-color: rgb(55 65 81); }
+    .hover\:bg-gray-700:hover { background-color: rgb(55 65 81); }
+    
+    /* 레이아웃 움직임 방지를 위한 스타일 */
+    html { overflow-y: scroll; }
+    body { min-height: 100vh; }
+    
+    /* 네비게이션 바 레이아웃 고정 */
+    .nav-container {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .left-menu-fixed {
+        display: flex;
+        width: 300px;
+        min-width: 300px;
+        margin-right: auto;
+        justify-content: space-between;
+    }
+    
+    .nav-menu-item {
+        text-align: center;
+        flex-shrink: 0;
+    }
+    
+    .nav-menu-item:nth-child(1) { width: 80px; }
+    .nav-menu-item:nth-child(2) { width: 80px; }
+    .nav-menu-item:nth-child(3) { width: 120px; }
+    
+  /* 드롭다운 메뉴 (기본 스타일만 CSS로 정의) */
+    .dropdown-menu {
+        position: absolute;
+      left: -100px;
+        top: 100%;
+      z-index: 1000;
+      width: 800px;
+        max-width: 95vw;
+        border-radius: 0.375rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        background-color: rgb(31 41 55);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        visibility: hidden;
+      transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+      pointer-events: none;
+  }
+
+  /* 카테고리 버튼 스타일 */
+  .category-btn-main {
+      display: inline-block;
+      padding: 8px 12px;
+      color: rgb(209 213 219);
+      font-weight: 500;
+      cursor: pointer;
+  }
+  
+  .category-btn-main:hover {
+      color: white;
+  }
+
+  /* 마우스 오버 시 드롭다운 메뉴 표시 */
+  .category-btn-main:hover + .dropdown-menu,
+  .dropdown-menu:hover {
+        opacity: 1;
+        visibility: visible;
+      pointer-events: auto;
+    }
+    
+    /* 선택된 카테고리 스타일 */
+    .category-active {
+        background-color: rgb(55 65 81) !important;
+        color: white !important;
+    }
+    
+    /* 카테고리 콘텐츠 컨테이너 스타일 */
+    .category-container {
+        position: relative;
+      width: 100%;
+    }
+    
+    /* 카테고리 콘텐츠 기본 스타일 */
+    .category-content {
+      position: relative;
+        width: 100%;
+      display: none;
+      padding: 1rem 0;
+      background-color: rgb(31 41 55);
+    }
+    
+    /* 기본 활성화 카테고리 버튼 스타일 */
+  .category-btn.active {
+        background-color: rgb(55 65 81);
+      color: white;
+    }
+    
+    /* 마우스 오버 시 버튼 스타일 변경 */
+    .category-btn:hover {
+        background-color: rgb(55 65 81);
+        color: white;
+    }
+</style>
+
+<!-- 네비게이션바 -->
+<nav class="bg-gray-800 nav-container">
+  <!-- 상단 네비게이션 -->
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex items-center justify-end h-8">
+      <!-- 오른쪽 메뉴 그룹 -->
+      <div class="flex items-center space-x-2">
+        
+          <a href="/ko/mem/login/" class="text-gray-400 hover:text-white px-2 py-1 text-[11px]">로그인</a>
+        
+
+        <!-- 언어 선택 드롭다운 -->
+        <div class="relative group">
+          <button class="text-gray-400 hover:text-white px-2 py-1 flex items-center text-[11px]">
+            <span>ko</span>
+            <svg class="ml-1 h-3 w-3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" fill="none" stroke="currentColor"/></svg>
+          </button>
+          <div class="absolute right-0 top-full w-24 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 hidden group-hover:block z-50">
+            <input type="hidden" name="csrfmiddlewaretoken" value="M45jiGKOZHsofn9crNy6Xd2rv9KBYHegHbtkgYcf012USKPCoMNgDsbYIXyhyjZq">
+            <button onclick="changeLanguage('en')" class="block w-full text-left px-3 py-1 text-[11px] text-gray-300 hover:text-white hover:bg-gray-700">English</button>
+            <button onclick="changeLanguage('ja')" class="block w-full text-left px-3 py-1 text-[11px] text-gray-300 hover:text-white hover:bg-gray-700">日本語</button>
+            <button onclick="changeLanguage('ko')" class="block w-full text-left px-3 py-1 text-[11px] text-gray-300 hover:text-white hover:bg-gray-700">한국어</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 네비게이션 -->
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex items-center h-10">
+      <!-- 왼쪽 메뉴 그룹 - 여백 고정 -->
+      <div class="left-menu-fixed">
+        <a href="/ko/" class="nav-menu-item text-gray-300 hover:text-white px-3 py-[8px] font-medium">
+          비디오
+        </a>
+        <a href="/ko/vi/list/" class="nav-menu-item text-gray-300 hover:text-white px-3 py-[8px] font-medium">
+          최신
+        </a>
+        <div class="nav-menu-item relative">
+          <span class="category-btn-main">카테고리</span>
+          <!-- 카테고리 드롭다운 메뉴 -->
+          <div class="dropdown-menu">
+            <div class="p-2">
+              <!-- 부모 카테고리 목록 -->
+              <div class="grid grid-cols-4 gap-1 mb-2">
+                <button class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-btn active" data-category="main">
+                  Main
+                </button>
+                <button class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-btn" data-category="sexual-act">
+                  Sexual Act
+                </button>
+                <button class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-btn" data-category="kink">
+                  Kink
+                </button>
+                <button class="w-full text-left px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-btn" data-category="roleplay">
+                  Roleplay
+                </button>
+              </div>
+
+              <!-- 구분선 -->
+              <div class="border-t border-gray-700 my-2"></div>
+
+              <!-- 카테고리 콘텐츠 컨테이너 -->
+              <div class="category-container">
+                <!-- Main 카테고리 콘텐츠 -->
+                <div class="category-content" id="main-content">
+                  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                    
+                      <a href="/ko/vi/category/?cate=None" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link category-active" 
+                         data-category-id="1">아시아</a>
+                      <a href="/ko/vi/category/?cate=1-2" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="2">흑인</a>
+                      <a href="/ko/vi/category/?cate=1-3" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="3">라틴</a>
+                      <a href="/ko/vi/category/?cate=1-4" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="4">미시</a>
+                      <a href="/ko/vi/category/?cate=1-5" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="5">청소년</a>
+                      <a href="/ko/vi/category/?cate=1-6" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="6">인종간</a>
+                      <a href="/ko/vi/category/?cate=1-7" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="7">레즈비언</a>
+                      <a href="/ko/vi/category/?cate=1-8" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="8">게이</a>
+                      <a href="/ko/vi/category/?cate=1-9" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="9">트랜스젠더</a>
+                    
+                  </div>
+                </div>
+
+                <!-- Sexual Act 카테고리 콘텐츠 -->
+                <div class="category-content" id="sexual-act-content">
+                  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                    
+                      <a href="/ko/vi/category/?cate=1-31" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="31">Anal</a>
+                      <a href="/ko/vi/category/?cate=1-32" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="32">Blowjob</a>
+                      <a href="/ko/vi/category/?cate=1-33" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="33">Deepthroat</a>
+                      <a href="/ko/vi/category/?cate=1-34" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="34">Cuckold</a>
+                      <a href="/ko/vi/category/?cate=1-35" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="35">Creampie</a>
+                      <a href="/ko/vi/category/?cate=1-36" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="36">DP</a>
+                      <a href="/ko/vi/category/?cate=1-37" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="37">Gangbang</a>
+                      <a href="/ko/vi/category/?cate=1-38" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="38">Handjob</a>
+                      <a href="/ko/vi/category/?cate=1-39" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="39">Orgy</a>
+                      <a href="/ko/vi/category/?cate=1-40" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="40">Rough Sex</a>
+                    
+                  </div>
+                </div>
+
+                <!-- Kink 카테고리 콘텐츠 -->
+                <div class="category-content" id="kink-content">
+                  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                    
+                      <a href="/ko/vi/category/?cate=1-61" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="61">BDSM</a>
+                      <a href="/ko/vi/category/?cate=1-62" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="62">Bondage</a>
+                      <a href="/ko/vi/category/?cate=1-63" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="63">Feet</a>
+                      <a href="/ko/vi/category/?cate=1-64" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="64">Fisting</a>
+                      <a href="/ko/vi/category/?cate=1-65" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="65">Lactation</a>
+                      <a href="/ko/vi/category/?cate=1-66" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="66">Public</a>
+                    
+                  </div>
+                </div>
+
+                <!-- Roleplay 카테고리 콘텐츠 -->
+                <div class="category-content" id="roleplay-content">
+                  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
+                    
+                      <a href="/ko/vi/category/?cate=1-91" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="91">Schoolgirl</a>
+                      <a href="/ko/vi/category/?cate=1-92" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="92">Maid</a>
+                      <a href="/ko/vi/category/?cate=1-93" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="93">Secretary</a>
+                      <a href="/ko/vi/category/?cate=1-94" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="94">Nurse</a>
+                      <a href="/ko/vi/category/?cate=1-95" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="95">Step Mom</a>
+                      <a href="/ko/vi/category/?cate=1-96" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="96">Step Sister</a>
+                      <a href="/ko/vi/category/?cate=1-97" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="97">Step Daughter</a>
+                      <a href="/ko/vi/category/?cate=1-98" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="98">Boss</a>
+                      <a href="/ko/vi/category/?cate=1-99" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="99">Doctor</a>
+                      <a href="/ko/vi/category/?cate=1-100" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="100">Cop</a>
+                      <a href="/ko/vi/category/?cate=1-101" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="101">Military</a>
+                      <a href="/ko/vi/category/?cate=1-102" 
+                         class="px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-700 rounded-md category-link " 
+                         data-category-id="102">Affair</a>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- JavaScript 코드 -->
+<script>
+// 언어 변경 함수
+function changeLanguage(language) {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    if (!csrftoken) return;
+    
+    let currentPath = window.location.pathname;
+    const searchParams = window.location.search;
+    const langMatch = currentPath.match(/^\/([a-z]{2})\//);
+    
+    currentPath = langMatch 
+        ? currentPath.replace(/^\/[a-z]{2}\//, `/${language}/`) 
+        : `/${language}${currentPath}`;
+
+    fetch('/i18n/setlang/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'X-CSRFToken': csrftoken
+        },
+        body: `language=${language}&next=${encodeURIComponent(currentPath + searchParams)}`
+    }).then(response => {
+        if (response.ok) {
+            window.location.href = currentPath + searchParams;
+        }
+    });
+}
+
+// 카테고리 관련 JavaScript 로직
+document.addEventListener('DOMContentLoaded', function() {
+    // 카테고리 콘텐츠 초기화 (Main 카테고리만 표시)
+    showCategoryContent('main');
+    
+    // 카테고리 버튼에 이벤트 리스너 추가
+    document.querySelectorAll('.category-btn').forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            const category = this.getAttribute('data-category');
+            showCategoryContent(category);
+            
+            // 활성화된 버튼 스타일 변경
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            this.classList.add('active');
+        });
+    });
+    
+    // 드롭다운 메뉴에서 마우스가 벗어날 때 Main 카테고리로 복귀
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    dropdownMenu.addEventListener('mouseleave', function() {
+        showCategoryContent('main');
+        
+        // Main 버튼 활성화
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector('.category-btn[data-category="main"]').classList.add('active');
+    });
+    
+    // 카테고리 콘텐츠 표시 함수
+    function showCategoryContent(category) {
+        // 모든 카테고리 콘텐츠 숨기기
+        document.querySelectorAll('.category-content').forEach(content => {
+            content.style.display = 'none';
+        });
+        
+        // 선택된 카테고리 콘텐츠 표시
+        const selectedContent = document.getElementById(`${category}-content`);
+        if (selectedContent) {
+            selectedContent.style.display = 'block';
+        }
+    }
+});
+</script>
+    
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- 선택된 필터 정보 -->
+  
+    <div class="mb-6">
+      <!-- 선택된 카테고리 태그 -->
+      <div class="flex flex-wrap gap-2">
+        
+          
+        
+          
+            
+              
+                <a href="/ko/vi/list/" 
+                   class="inline-flex items-center px-3 py-1 rounded text-sm font-medium bg-gray-700 text-white hover:bg-gray-600 transition">
+                  Asian
+                </a>
+              
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      </div>
+    </div>
+  
+  
+  <!-- 비디오 목록 -->
+  <div class="space-y-4">
+    
+      <!-- 비디오 아이템 -->
+      <div class="bg-gray-800 rounded-lg overflow-hidden">
+        <div class="flex">
+          <!-- 비디오 썸네일 -->
+          <div class="w-[320px] h-[180px] relative flex-shrink-0">
+            <a href="/ko/vi/detail/12/" class="block w-full h-full">
+              <img src="/media/vi/img/24.png" alt="12" class="w-full h-full object-cover">
+              <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 text-xs text-white rounded">
+                01:30:00
+              </div>
+            </a>
+          </div>
+
+          <!-- 비디오 정보 -->
+          <div class="flex-1 p-4">
+            <a href="/ko/vi/detail/12/" class="block">
+              <h2 class="text-lg font-medium text-white mb-2">12</h2>
+            </a>
+
+            <!-- 태그들 -->
+            <div class="mb-2 flex flex-wrap gap-2">
+              
+            </div>
+
+            <!-- 설명 -->
+            
+              <p class="text-sm text-gray-400 line-clamp-2">sdfasdfewer v szcv  werwrw rwrwe dfsdafsadsdadsd sa sdfsaf</p>
+            
+          </div>
+        </div>
+      </div>
+    
+      <!-- 비디오 아이템 -->
+      <div class="bg-gray-800 rounded-lg overflow-hidden">
+        <div class="flex">
+          <!-- 비디오 썸네일 -->
+          <div class="w-[320px] h-[180px] relative flex-shrink-0">
+            <a href="/ko/vi/detail/11/" class="block w-full h-full">
+              <img src="/media/vi/img/24.png" alt="11" class="w-full h-full object-cover">
+              <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 text-xs text-white rounded">
+                20:00
+              </div>
+            </a>
+          </div>
+
+          <!-- 비디오 정보 -->
+          <div class="flex-1 p-4">
+            <a href="/ko/vi/detail/11/" class="block">
+              <h2 class="text-lg font-medium text-white mb-2">11</h2>
+            </a>
+
+            <!-- 태그들 -->
+            <div class="mb-2 flex flex-wrap gap-2">
+              
+            </div>
+
+            <!-- 설명 -->
+            
+              <p class="text-sm text-gray-400 line-clamp-2">ㅈㄷㄱㅈㄷㄹ23ㄱ2ㄱ</p>
+            
+          </div>
+        </div>
+      </div>
+    
+      <!-- 비디오 아이템 -->
+      <div class="bg-gray-800 rounded-lg overflow-hidden">
+        <div class="flex">
+          <!-- 비디오 썸네일 -->
+          <div class="w-[320px] h-[180px] relative flex-shrink-0">
+            <a href="/ko/vi/detail/10/" class="block w-full h-full">
+              <img src="/media/vi/img/24.png" alt="10" class="w-full h-full object-cover">
+              <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 text-xs text-white rounded">
+                20:00
+              </div>
+            </a>
+          </div>
+
+          <!-- 비디오 정보 -->
+          <div class="flex-1 p-4">
+            <a href="/ko/vi/detail/10/" class="block">
+              <h2 class="text-lg font-medium text-white mb-2">10</h2>
+            </a>
+
+            <!-- 태그들 -->
+            <div class="mb-2 flex flex-wrap gap-2">
+              
+                
+                  <!-- 선택되지 않은 태그 - 클릭 시 필터에 추가 -->
+                  
+                    <a href="/ko/vi/category/?cate=1&tags=66" 
+                       class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-800 text-gray-200 hover:bg-gray-700 transition">
+                      Best of
+                    </a>
+                  
+                
+              
+            </div>
+
+            <!-- 설명 -->
+            
+              <p class="text-sm text-gray-400 line-clamp-2">sdfasdfewer v szcv  werwrw rwrwe dfsdafsadsdadsd sa sdfsaf</p>
+            
+          </div>
+        </div>
+      </div>
+    
+      <!-- 비디오 아이템 -->
+      <div class="bg-gray-800 rounded-lg overflow-hidden">
+        <div class="flex">
+          <!-- 비디오 썸네일 -->
+          <div class="w-[320px] h-[180px] relative flex-shrink-0">
+            <a href="/ko/vi/detail/1/" class="block w-full h-full">
+              <img src="/media/vi/img/23.png" alt="1" class="w-full h-full object-cover">
+              <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 text-xs text-white rounded">
+                10:00:00
+              </div>
+            </a>
+          </div>
+
+          <!-- 비디오 정보 -->
+          <div class="flex-1 p-4">
+            <a href="/ko/vi/detail/1/" class="block">
+              <h2 class="text-lg font-medium text-white mb-2">1</h2>
+            </a>
+
+            <!-- 태그들 -->
+            <div class="mb-2 flex flex-wrap gap-2">
+              
+                
+                  <!-- 선택되지 않은 태그 - 클릭 시 필터에 추가 -->
+                  
+                    <a href="/ko/vi/category/?cate=1&tags=66" 
+                       class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-800 text-gray-200 hover:bg-gray-700 transition">
+                      Best of
+                    </a>
+                  
+                
+              
+            </div>
+
+            <!-- 설명 -->
+            
+              <p class="text-sm text-gray-400 line-clamp-2">ㅈㄷㄱㅈㄹㅈ</p>
+            
+          </div>
+        </div>
+      </div>
+    
+      <!-- 비디오 아이템 -->
+      <div class="bg-gray-800 rounded-lg overflow-hidden">
+        <div class="flex">
+          <!-- 비디오 썸네일 -->
+          <div class="w-[320px] h-[180px] relative flex-shrink-0">
+            <a href="/ko/vi/detail/4/" class="block w-full h-full">
+              <img src="/media/vi/img/23.png" alt="23번" class="w-full h-full object-cover">
+              <div class="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 text-xs text-white rounded">
+                20:00
+              </div>
+            </a>
+          </div>
+
+          <!-- 비디오 정보 -->
+          <div class="flex-1 p-4">
+            <a href="/ko/vi/detail/4/" class="block">
+              <h2 class="text-lg font-medium text-white mb-2">23번</h2>
+            </a>
+
+            <!-- 태그들 -->
+            <div class="mb-2 flex flex-wrap gap-2">
+              
+                
+                  <!-- 선택되지 않은 태그 - 클릭 시 필터에 추가 -->
+                  
+                    <a href="/ko/vi/category/?cate=1&tags=13" 
+                       class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-800 text-gray-200 hover:bg-gray-700 transition">
+                      BBW
+                    </a>
+                  
+                
+              
+                
+                  <!-- 선택되지 않은 태그 - 클릭 시 필터에 추가 -->
+                  
+                    <a href="/ko/vi/category/?cate=1&tags=66" 
+                       class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-800 text-gray-200 hover:bg-gray-700 transition">
+                      Best of
+                    </a>
+                  
+                
+              
+            </div>
+
+            <!-- 설명 -->
+            
+              <p class="text-sm text-gray-400 line-clamp-2">sdfasfdas asfsadfasdf fs df asdfasfdsafasdfsaf</p>
+            
+          </div>
+        </div>
+      </div>
+    
+  </div>
+</div>
+
+</body>
+</html>  
